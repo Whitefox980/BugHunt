@@ -1,37 +1,105 @@
+#!/usr/bin/env python3
 import os
 import subprocess
-from datetime import datetime
 
-# Log fajl
-log_dir = "logs"
-os.makedirs(log_dir, exist_ok=True)
-log_file = os.path.join(log_dir, f"log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
+def run_all():
+    print("Pokrećem sve testove iz poc_scripts...")
+    scripts = [f for f in os.listdir("poc_scripts") if f.endswith(".py")]
+    for script in scripts:
+        print(f"[*] Pokrećem: {script}")
+        subprocess.run(["python3", f"poc_scripts/{script}"])
+        print("-" * 50)
 
-def log(msg):
-    with open(log_file, "a") as f:
-        f.write(msg + "\n")
-    print(msg)
+def run_selected():
+    print("Dostupni testovi:")
+    scripts = [f for f in os.listdir("poc_scripts") if f.endswith(".py")]
+    for i, script in enumerate(scripts):
+        print(f"[{i+1}] {script}")
+    choices = input("Unesi brojeve testova odvojenih zarezom (npr. 1,3,5): ")
+    indices = [int(i.strip()) - 1 for i in choices.split(",")]
+    for idx in indices:
+        script = scripts[idx]
+        print(f"[*] Pokrećem: {script}")
+        subprocess.run(["python3", f"poc_scripts/{script}"])
+        print("-" * 50)
 
-log("=== BugHunt Session Started ===")
+def view_results():
+    print("Rezultati u folderu 'results/':")
+    os.system("ls -lh results")
 
-# 1. Pokretanje recon.sh
-log("\n[+] Pokrećem recon skriptu...")
-try:
-    subprocess.run(["bash", "termux_commands/recon.sh"], check=True)
-    log("[+] recon.sh uspešno izvršen.")
-except subprocess.CalledProcessError:
-    log("[-] Greška prilikom izvršavanja recon.sh")
+def generate_report():
+    print("Generišem izveštaj...")
+    os.system("python3 logics/generate_report.py")
 
-# 2. Pokretanje svih PoC Python skripti
-log("\n[+] Pokrećem PoC skripte iz poc_scripts/")
-for fname in os.listdir("poc_scripts"):
-    if fname.endswith(".py"):
-        path = os.path.join("poc_scripts", fname)
-        log(f"\n[>] Pokrećem: {fname}")
-        try:
-            output = subprocess.check_output(["python", path], stderr=subprocess.STDOUT)
-            log(output.decode())
-        except subprocess.CalledProcessError as e:
-            log(f"[-] Greška u {fname}: {e.output.decode()}")
+def edit_targets():
+    os.system("nano targets/targets.txt")
 
-log("\n=== Kraj sesije ===")
+def ai_analyze():
+    print("Pokrećem AI analizu rezultata...")
+    os.system("python3 ai_analyze_results.py")
+
+while True:
+    os.system("clear")
+    print("""BugHunt Terminal Menu
+
+[1] Pokreni sve testove (FULL scan)
+[2] Pokreni odabrane testove
+[3] Pregled rezultata (results/)
+[4] Generiši izveštaj (Markdown / JSON / CSV)
+[5] Podesi metu (targets.txt)
+[6] Izlaz
+[7] AI analiza rezultata (.txt > .md)
+""")
+    choice = input("Unesi opciju: ").strip()
+    
+    if choice == "1":
+        run_all()
+    elif choice == "2":
+        run_selected()
+    elif choice == "3":
+        view_results()
+    elif choice == "4":
+        generate_report()
+    elif choice == "5":
+        edit_targets()
+    elif choice == "6":
+        print("Izlaz...")
+        break
+    elif choice == "7":
+        ai_analyze()
+    else:
+        print("Nepoznata opcija!")
+    
+
+    input("\nPritisni Enter za nastavak...")
+BugHunt Terminal Menu
+
+[1] Pokreni sve testove (FULL scan)
+[2] Pokreni odabrane testove
+[3] Pregled rezultata (results/)
+[4] Generiši izveštaj (Markdown / JSON / CSV)
+[5] Podesi metu (targets.txt)
+[6] Izlaz
+
+Unesi opciju: 
+""")
+    choice = input().strip()
+    
+    if choice == "1":
+        run_all()
+    elif choice == "2":
+        run_selected()
+    elif choice == "3":
+        view_results()
+    elif choice == "4":
+        generate_report()
+    elif choice == "5":
+        edit_targets()
+    elif choice == "6":
+        print("Izlaz...")
+        break
+    else:
+        print("Nepoznata opcija!")
+    
+    input("\nPritisni Enter za nastavak...")
+

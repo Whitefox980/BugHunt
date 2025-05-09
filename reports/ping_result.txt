@@ -1,0 +1,8 @@
+PING example.com (23.192.228.80) 56(84) bytes of data.
+64 bytes from a23-192-228-80.deploy.static.akamaitechnologies.com (23.192.228.80): icmp_seq=1 ttl=50 time=224 ms
+64 bytes from a23-192-228-80.deploy.static.akamaitechnologies.com (23.192.228.80): icmp_seq=2 ttl=50 time=181 ms
+64 bytes from a23-192-228-80.deploy.static.akamaitechnologies.com (23.192.228.80): icmp_seq=3 ttl=50 time=197 ms
+
+--- example.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2004ms
+rtt min/avg/max/mdev = 181.726/201.418/224.786/17.774 ms
